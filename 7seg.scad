@@ -24,6 +24,8 @@
 //       
 // ****************************************************************************
 
+include <skew.scad>
+
 ledLen=100/6;           // length of each LED in the strip
 ledWidth=10;            // width of one LED strip
 wallThickness=1.3;      // the thickness of the segment side-walls
@@ -48,8 +50,8 @@ segFrontDepth=13;       // how deep to make the front
 segGrossBackZ = segBackDepth+segBackThickness;    // Gross Z-height of the back
 segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front 
 
-back();
-//front();
+skew([6,0,0,0,0,0]) back7();
+//skew([-6,0,0,0,0,0]) front7();
 
 *difference()
 {
@@ -57,6 +59,30 @@ back();
     translate([0,-50,0])cube([100,100,100], center=true);
 }
 
+module front7()
+{
+    rotate([0,0,90]) front();
+    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
+    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
+    
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
+    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();
+        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
+}
+
+
+module back7()
+{
+    rotate([0,0,90]) back();
+    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back();
+    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back();
+    
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back();
+    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back();
+        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back();
+}
 
 
 /**
