@@ -79,8 +79,8 @@ module back7()
     translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back();
     
     translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back();
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back();
-    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) rotate([0,0,180]) back(wireHole=(segNumLedStrips%2==1));
+    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(wireHole=true);
         translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back();
 }
 
@@ -99,11 +99,12 @@ module front()
 /**
 * One complete back segment.
 ************************************************************************/
-module back()
+module back(wireHole=false)
 {
     segment(segInsideWidth, segInsideLength, 
         segOutsideWidth, segOutsideLength, 
-        segBackThickness, segGrossBackZ);
+        segBackThickness, segGrossBackZ,
+        wireHole);
     
     for ( x = [-segInsideWidth/2+slotWidth+dividerWidth/2 : slotWidth+dividerWidth : segInsideWidth/2] )
     {
@@ -123,12 +124,15 @@ module back()
 * @param iz The thickness of the segment back/face.
 * @param gz The gross thickness of the segment in the Z axis.
 ************************************************************************/
-module segment(iw, il, ow, ol, iz, gz)
+module segment(iw, il, ow, ol, iz, gz, wireHole=false)
 {
     difference()
     {
         rawSegment(ow, ol, gz);
         translate([0,0,iz]) rawSegment(iw, il, gz);
+        
+        if (wireHole)
+            translate([0,-(il/2+iw/4),-1]) cylinder(d=wireHoleSize, h=iz+2, $fn=20);
     }
 }
 
