@@ -53,12 +53,9 @@ segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front
 skew([6,0,0,0,0,0]) back7();
 //skew([-6,0,0,0,0,0]) front7();
 
-*difference()
-{
-    back();
-    translate([0,-50,0])cube([100,100,100], center=true);
-}
-
+/**
+* One complete 7-segment front/diffuser.
+************************************************************************/
 module front7()
 {
     rotate([0,0,90]) front();
@@ -72,16 +69,19 @@ module front7()
 }
 
 
+/**
+* One complete 7-segment back.
+************************************************************************/
 module back7()
 {
-    rotate([0,0,90]) back();
-    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back();
-    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back();
+    rotate([0,0,90]) back(ur=false, ll=false);
+    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back(ul=false, ll=false);
+    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back(ur=false, lr=false);
     
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back();
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) rotate([0,0,180]) back(wireHole=(segNumLedStrips%2==1));
-    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(wireHole=true);
-        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(ur=false, lr=false);
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) rotate([0,0,180]) back(ul=false, wireHole=(segNumLedStrips%2==1));
+    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(ul=false, wireHole=true);
+        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back(ul=false, ll=false);
 }
 
 
@@ -98,13 +98,15 @@ module front()
 
 /**
 * One complete back segment.
+*
+* @param wireHole When true, include a hole in the bottom of the segment.
 ************************************************************************/
-module back(wireHole=false)
+module back(ll=true, ul=true, lr=true, ur=true, wireHole=false)
 {
     segment(segInsideWidth, segInsideLength, 
         segOutsideWidth, segOutsideLength, 
         segBackThickness, segGrossBackZ,
-        wireHole);
+        ll=ll, ul=ul, lr=lr, ur=ur, wireHole=wireHole);
     
     for ( x = [-segInsideWidth/2+slotWidth+dividerWidth/2 : slotWidth+dividerWidth : segInsideWidth/2] )
     {
@@ -123,13 +125,25 @@ module back(wireHole=false)
 * @param ol The outside length (cap-center to cap-center) of the segment.
 * @param iz The thickness of the segment back/face.
 * @param gz The gross thickness of the segment in the Z axis.
+* @param wireHole When true, include a hole in the bottom of the segment.
 ************************************************************************/
-module segment(iw, il, ow, ol, iz, gz, wireHole=false)
+module segment(iw, il, ow, ol, iz, gz, ll=true, ul=true, lr=true, ur=true, wireHole=false)
 {
+    ifl = sqrt((iw*iw)/2);	// the length of one face of an end-cap
+
     difference()
     {
         rawSegment(ow, ol, gz);
         translate([0,0,iz]) rawSegment(iw, il, gz);
+        
+        if (!ll)
+            translate([-iw/4,-(il/2+iw/4),gz/2+iz]) rotate([0,0,45]) cube([ifl,ifl,gz], center=true);
+        if (!lr)
+            translate([iw/4,-(il/2+iw/4),gz/2+iz]) rotate([0,0,45]) cube([ifl,ifl,gz], center=true);
+        if (!ul)
+            translate([-iw/4,(il/2+iw/4),gz/2+iz]) rotate([0,0,45]) cube([ifl,ifl,gz], center=true);
+        if (!ur)
+            translate([iw/4,(il/2+iw/4),gz/2+iz]) rotate([0,0,45]) cube([ifl,ifl,gz], center=true);
         
         if (wireHole)
             translate([0,-(il/2+iw/4),-1]) cylinder(d=wireHoleSize, h=iz+2, $fn=20);
