@@ -33,7 +33,7 @@ dividerWidth=1.2;       // the width of the strip-divider
 dividerHeight=1.5;      // the height of the strip-divider
 slotWidth=ledWidth+.75; // the width of the slot needed for an LED strip
 segNumLedStrips=2;      // how many LED strips per segment
-segNumStripLeds=5;      // how many LEDs per strip
+segNumStripLeds=3;      // how many LEDs per strip
 wireHoleSize=4.5;
 
 segInsideWidth = segNumLedStrips*slotWidth+(segNumLedStrips-1)*dividerWidth;   // gross segment inside width
@@ -50,7 +50,9 @@ segFrontDepth=13;       // how deep to make the front
 segGrossBackZ = segBackDepth+segBackThickness;    // Gross Z-height of the back
 segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front 
 
-skew([6,0,0,0,0,0]) back7();
+front();
+//back();
+//skew([6,0,0,0,0,0]) back7();
 //skew([-6,0,0,0,0,0]) front7();
 
 /**
@@ -92,7 +94,8 @@ module front()
 {
     segment(segInsideWidth, segInsideLength, 
         segOutsideWidth, segOutsideLength, 
-        segFrontThickness, segFrontDepth);
+        segFrontThickness, segFrontDepth,
+        tongue=true);
 }
 
 
@@ -106,6 +109,7 @@ module back(ll=true, ul=true, lr=true, ur=true, wireHole=false)
     segment(segInsideWidth, segInsideLength, 
         segOutsideWidth, segOutsideLength, 
         segBackThickness, segGrossBackZ,
+        groove=true,
         ll=ll, ul=ul, lr=lr, ur=ur, wireHole=wireHole);
     
     for ( x = [-segInsideWidth/2+slotWidth+dividerWidth/2 : slotWidth+dividerWidth : segInsideWidth/2] )
@@ -127,10 +131,14 @@ module back(ll=true, ul=true, lr=true, ur=true, wireHole=false)
 * @param gz The gross thickness of the segment in the Z axis.
 * @param wireHole When true, include a hole in the bottom of the segment.
 ************************************************************************/
-module segment(iw, il, ow, ol, iz, gz, ll=true, ul=true, lr=true, ur=true, wireHole=false)
+module segment(iw, il, ow, ol, iz, gz, ll=true, ul=true, lr=true, ur=true, wireHole=false, groove=false, tongue=false)
 {
     ifl = sqrt((iw*iw)/2);	// the length of one face of an end-cap
-
+    grad=.6;                // groove cylinder radius
+    gzoffset=grad*4;        // offset from the top of the back segment to cyl
+    gxoffset=iw/2-grad*.1;  // offset into wall from center
+    gydim=il/2;             // length of the groove
+    
     difference()
     {
         rawSegment(ow, ol, gz);
@@ -147,6 +155,56 @@ module segment(iw, il, ow, ol, iz, gz, ll=true, ul=true, lr=true, ur=true, wireH
         
         if (wireHole)
             translate([0,-(il/2+iw/4),-1]) cylinder(d=wireHoleSize, h=iz+2, $fn=20);
+        
+        if (groove)
+        {
+            for (a=[0,180])
+                rotate([0,0,a])
+                    translate([gxoffset,0,gz-gzoffset])
+                        rotate([90,0,0])
+                            cylinder(r=grad, h=gydim, center=true, $fn=20);
+        }
+    }
+    
+    if (tongue)
+    {
+        x=ow-iw;        // tounge bracket width
+        y=gydim-2;      // tongue bracket length 
+        z=2*(gzoffset+grad);   // height of the tongue bracket
+        wff=.4;
+        tff=.25;
+        
+        for (a=[0,180])
+            rotate([0,0,a])
+            {
+                // the tongue mounting bracket
+                difference()
+                {
+                    translate([iw/2,0,gz]) cube([x,y,z], center=true); 
+                    translate([iw/2+x/2-wff,0,gz+z/2]) cube([x,y+1,z], center=true); 
+                }
+                
+                // The tongue
+                difference()
+                {
+                    // the tongue cylinder
+                    translate([gxoffset-tff,0,gz+gzoffset]) 
+                        rotate([90,0,0])
+                            cylinder(r=grad, h=y, center=true, $fn=20);
+                    
+                    // chamfer the ends of the tongue
+                    for (cy=[y/2, -y/2])
+                        translate([gxoffset-tff,cy,gz+gzoffset-grad])
+                            rotate([0,0,-45])
+                                cube([grad*2,grad*2,grad*2]);
+                }
+                
+                // add a 1/4-round base to the inside wall under the bracket
+                translate([iw/2,0,gz-z/2])
+                    scale([1,1,1.5])
+                        rotate([90,0,0])
+                            cylinder(d=x, h=y, center=true, $fn=20);
+            }
     }
 }
 
