@@ -50,10 +50,16 @@ segFrontDepth=13;       // how deep to make the front
 segGrossBackZ = segBackDepth+segBackThickness;    // Gross Z-height of the back
 segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front 
 
-front();
-//back();
+
+
+// Uncomment ONE of the following lines to render either the front or back
 //skew([6,0,0,0,0,0]) back7();
-//skew([-6,0,0,0,0,0]) front7();
+skew([-6,0,0,0,0,0]) front7();
+
+//front();
+//back();
+
+
 
 /**
 * One complete 7-segment front/diffuser.
