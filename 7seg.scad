@@ -54,10 +54,10 @@ segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front
 
 // Uncomment ONE of the following lines to render either the front or back
 //skew([6,0,0,0,0,0]) back7();
-skew([-6,0,0,0,0,0]) front7();
+//skew([-6,0,0,0,0,0]) front7();
 
 //front();
-//back();
+skew([6,0,0,0,0,0]) back();
 
 
 
