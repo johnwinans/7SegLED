@@ -54,10 +54,15 @@ segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front
 
 // Uncomment ONE of the following lines to render either the front or back
 //skew([6,0,0,0,0,0]) back7();
-//skew([-6,0,0,0,0,0]) front7();
+skew([6,0,0,0,0,0]) back7Top();
+//skew([6,0,0,0,0,0]) back7Bottom();
 
-//front();
-skew([6,0,0,0,0,0]) back();
+//skew([-6,0,0,0,0,0]) front7();
+//skew([-6,0,0,0,0,0]) front7Top();
+//skew([-6,0,0,0,0,0]) front7Bottom();
+
+//skew([-6,0,0,0,0,0]) front();
+//skew([6,0,0,0,0,0]) back();
 
 
 
@@ -66,31 +71,52 @@ skew([6,0,0,0,0,0]) back();
 ************************************************************************/
 module front7()
 {
-    rotate([0,0,90]) front();
-    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
-    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
-    
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
-    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();
-        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
+    front7Top();
+    front7Bottom();
 }
 
+module front7Top()
+{
+    rotate([0,0,90]) front();
+    translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();
+    translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) front();  
+}
+
+module front7Bottom()
+{
+    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) front();
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
+        translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) front();
+}
 
 /**
 * One complete 7-segment back.
 ************************************************************************/
 module back7()
 {
+    back7Top();
+    back7Bottom();
+}
+
+module back7Top()
+{
     rotate([0,0,90]) back(ur=false, ll=false);
     translate([0,(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back(ul=false, ll=false);
-    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back(ur=false, lr=false);
     
     translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(ur=false, lr=false);
-    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) rotate([0,0,180]) back(ul=false, wireHole=(segNumLedStrips%2==1));
     translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,(segOutsideLength/2+segOutsideWidth/2),0]) back(ul=false, wireHole=true);
+}
+
+module back7Bottom()
+{
+    translate([0,-(segOutsideLength+segOutsideWidth),0]) rotate([0,0,90]) back(ur=false, lr=false);
+    
+    translate([-(segOutsideLength/2+segOutsideWidth/2)+.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) rotate([0,0,180]) back(ul=false, wireHole=(segNumLedStrips%2==1));
         translate([(segOutsideLength/2+segOutsideWidth/2)-.0001,-(segOutsideLength/2+segOutsideWidth/2),0]) back(ul=false, ll=false);
 }
+
+
 
 
 /**
