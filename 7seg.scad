@@ -33,7 +33,7 @@ dividerWidth=1.2;       // the width of the strip-divider
 dividerHeight=1.5;      // the height of the strip-divider
 slotWidth=ledWidth+.75; // the width of the slot needed for an LED strip
 segNumLedStrips=2;      // how many LED strips per segment
-segNumStripLeds=3;      // how many LEDs per strip
+segNumStripLeds=5;      // how many LEDs per strip
 wireHoleSize=4.5;
 
 segInsideWidth = segNumLedStrips*slotWidth+(segNumLedStrips-1)*dividerWidth;   // gross segment inside width
@@ -54,10 +54,10 @@ segGrossFrontZ = segFrontDepth+segFrontThickness; // Gross Z-height of the front
 
 // Uncomment ONE of the following lines to render either the front or back
 //skew([6,0,0,0,0,0]) back7();
-skew([6,0,0,0,0,0]) back7Top();
+//skew([6,0,0,0,0,0]) back7Top();
 //skew([6,0,0,0,0,0]) back7Bottom();
 
-//skew([-6,0,0,0,0,0]) front7();
+skew([-6,0,0,0,0,0]) front7();
 //skew([-6,0,0,0,0,0]) front7Top();
 //skew([-6,0,0,0,0,0]) front7Bottom();
 
